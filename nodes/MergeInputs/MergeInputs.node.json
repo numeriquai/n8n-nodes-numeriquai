@@ -1,0 +1,63 @@
+{
+	"name": "Flat Merge",
+	"displayName": "Flat Merge",
+	"description": "Deep merge multiple input JSON items into a single streamlined JSON object",
+	"icon": "mergeInputs.svg",
+	"group": "transform",
+	"version": 1,
+	"defaults": {
+		"name": "Flat Merge"
+	},
+	"inputs": "={{ Array($parameter[\"numberOfInputs\"]).fill('main') }}",
+	"outputs": ["main"],
+	"credentials": [],
+	"properties": [
+		{
+			"displayName": "Number of Inputs",
+			"name": "numberOfInputs",
+			"type": "options",
+			"options": [
+				{
+					"name": "2",
+					"value": 2
+				},
+				{
+					"name": "3",
+					"value": 3
+				},
+				{
+					"name": "4",
+					"value": 4
+				},
+				{
+					"name": "5",
+					"value": 5
+				},
+				{
+					"name": "6",
+					"value": 6
+				},
+				{
+					"name": "7",
+					"value": 7
+				},
+				{
+					"name": "8",
+					"value": 8
+				},
+				{
+					"name": "9",
+					"value": 9
+				},
+				{
+					"name": "10",
+					"value": 10
+				}
+			],
+			"default": 2,
+			"required": true,
+			"description": "Number of input connections to merge (add inputs using the + button on the node)"
+		}
+	]
+}
+

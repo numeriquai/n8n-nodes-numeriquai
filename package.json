@@ -1,0 +1,53 @@
+{
+  "name": "n8n-nodes-process-application",
+  "version": "0.1.0",
+  "description": "Custom n8n node for processing applications with backend API integration",
+  "keywords": [
+    "n8n-community-node-package"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/your-username/n8n-nodes-process-application",
+  "author": {
+    "name": "Your Name",
+    "email": "your.email@example.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/your-username/n8n-nodes-process-application.git"
+  },
+  "main": "dist/nodes/ProcessApplication/index.js",
+  "scripts": {
+    "build": "tsc && npm run copy-icons",
+    "copy-icons": "copyfiles \"nodes/**/*.{png,svg}\" dist/",
+    "dev": "tsc --watch",
+    "format": "prettier nodes credentials --write",
+    "lint": "eslint nodes credentials package.json",
+    "lintfix": "eslint nodes credentials package.json --fix",
+    "prepublishOnly": "npm run build && npm run lint -s"
+  },
+  "files": [
+    "dist"
+  ],
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "credentials": [],
+    "nodes": [
+      "dist/nodes/ProcessApplication/ProcessApplication.node.js",
+      "dist/nodes/MergeInputs/MergeInputs.node.js"
+    ]
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "copyfiles": "^2.4.1",
+    "eslint": "^8.0.0",
+    "eslint-plugin-n8n-nodes-base": "^1.0.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.0.0"
+  },
+  "peerDependencies": {
+    "n8n-workflow": "*",
+    "n8n-core": "*"
+  }
+}
