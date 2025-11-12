@@ -1,6 +1,6 @@
-# n8n-nodes-process-application
+# n8n-nodes-numeriquai
 
-A custom n8n community node for processing application data by sending it to a backend API with authentication.
+A custom n8n community node for Numeriquai data processing tools.
 
 ## Features
 
@@ -17,7 +17,7 @@ A custom n8n community node for processing application data by sending it to a b
 1. Go to your n8n instance
 2. Navigate to Settings > Community Nodes
 3. Click "Install a community node"
-4. Enter the package name: `n8n-nodes-process-application`
+4. Enter the package name: `n8n-nodes-numeriquai`
 5. Click "Install"
 
 ### For Local Development
@@ -35,7 +35,7 @@ A custom n8n community node for processing application data by sending it to a b
    ```bash
    npm link
    cd ~/.n8n/nodes
-   npm link n8n-nodes-process-application
+   npm link n8n-nodes-numeriquai
    ```
 
 ## Usage
@@ -44,12 +44,12 @@ A custom n8n community node for processing application data by sending it to a b
 
 - **Guideline ID** (required): The unique identifier for the guideline to process
 - **Input Data** (required): JSON object containing the data to send to the API
-- **Authentication Token** (required): Bearer token for API authentication
+- **Authentication Token** (required): API Key for API authentication
 - **API Endpoint** (required): The URL endpoint to send the request to (default: `http://localhost:8000/api/v1/audits`)
 
 ### Example Workflow
 
-1. Add the "Process Application" node to your workflow
+1. Add the "Numeriquai" node to your workflow
 2. Configure the parameters:
    - Guideline ID: `"guideline-123"`
    - Input Data: 
@@ -80,7 +80,7 @@ A custom n8n community node for processing application data by sending it to a b
 The node sends a POST request with:
 - **URL**: Configurable endpoint (default: `http://localhost:8000/api/v1/audits`)
 - **Headers**: 
-  - `Authorization: Bearer {token}`
+  - `X-API-Key: {token}`
   - `Content-Type: application/json`
 - **Body**: JSON object containing `guidelineId` merged with the input data
 
