@@ -1,2 +1,1 @@
-export * from './Numeriquai.node';
-
+export { Numeriquai } from './Numeriquai.node';

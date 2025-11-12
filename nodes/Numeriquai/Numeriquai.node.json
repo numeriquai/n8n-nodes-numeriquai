@@ -1,15 +1,22 @@
 {
 	"name": "numeriquai",
 	"displayName": "Numeriquai",
-	"description": "Work with Numeriquai data processing tools",
+	"description": "Numeriquai data processing tools",
 	"icon": "logo-numeriquai.png",
 	"group": "transform",
 	"version": 1,
+	"subtitle": "={{$parameter[\"operation\"] === \"flatMerge\" ? \"Flat Merge\" : \"Evaluate Rules\"}}",
 	"defaults": {
-		"name": "={{$parameter[\"operation\"] === \"flatMerge\" ? \"Flat Merge\" : \"Evaluate Rules\"}}"
+		"name": "Numeriquai"
 	},
 	"inputs": "={{$parameter[\"operation\"] === \"flatMerge\" ? Array($parameter[\"numberOfInputs\"]).fill(\"main\") : [\"main\"]}}",
 	"outputs": ["main"],
+	"credentials": [
+		{
+			"name": "numeriquaiApi",
+			"required": true
+		}
+	],
 	"codex": {
 		"categories": ["Data Transformation"],
 		"subcategories": {
@@ -27,14 +34,15 @@
 				{
 					"name": "Flat Merge",
 					"value": "flatMerge",
-					"description": "Deep merge multiple input JSON items into a single streamlined JSON object",
+					"description": "Merge multiple input JSON items into a single streamlined JSON object",
 					"action": "Flat Merge"
 				},
 				{
 					"name": "Evaluate Rules",
 					"value": "evaluateRules",
-					"description": "Process application data by sending it to a backend API",
-					"action": "Evaluate Rules"
+					"description": "Evaluate rules against data.",
+					"action": "Evaluate Rules",
+					"actionDisplayName": "Evaluate Rules"
 				}
 			]
 		},
@@ -70,22 +78,6 @@
 			"required": true,
 			"description": "The guideline ID to process",
 			"placeholder": "Enter guideline ID",
-			"displayOptions": {
-				"show": {
-					"operation": ["evaluateRules"]
-				}
-			}
-		},
-		{
-			"displayName": "Authentication Token",
-			"name": "authToken",
-			"type": "string",
-			"default": "",
-			"required": true,
-			"description": "The bearer token for API authentication",
-			"typeOptions": {
-				"password": true
-			},
 			"displayOptions": {
 				"show": {
 					"operation": ["evaluateRules"]

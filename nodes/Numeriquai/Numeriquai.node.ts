@@ -9,7 +9,7 @@ import {
 /**
  * Deep merge two objects recursively
  */
-function deepMerge(target: Record<string, any>, source: Record<string, any>): Record<string, any> {
+export function deepMerge(target: Record<string, any>, source: Record<string, any>): Record<string, any> {
 	const output = { ...target };
 
 	for (const key in source) {
@@ -41,10 +41,10 @@ export class Numeriquai implements INodeType {
 		icon: 'file:logo-numeriquai.png',
 		group: ['transform'],
 		version: 1,
-		subtitle: '={{$parameter["operation"]}}',
-		description: 'Work with Numeriquai data processing tools',
+		subtitle: '={{$parameter["operation"] === "flatMerge" ? "Flat Merge" : "Evaluate Rules"}}',
+		description: 'Numeriquai data processing tools',
 		defaults: {
-			name: '={{$parameter["operation"] === "flatMerge" ? "Flat Merge" : "Evaluate Rules"}}',
+			name: 'Numeriquai',
 		},
 		codex: {
 			categories: ['Data Transformation'],
@@ -58,7 +58,12 @@ export class Numeriquai implements INodeType {
 		},
 		inputs: '={{$parameter["operation"] === "flatMerge" ? Array($parameter["numberOfInputs"]).fill("main") : ["main"]}}',
 		outputs: ['main'],
-		credentials: [],
+		credentials: [
+			{
+				name: 'numeriquaiApi',
+				required: true,
+			},
+		],
 		properties: [
 			{
 				displayName: 'Operation',
@@ -69,13 +74,13 @@ export class Numeriquai implements INodeType {
 					{
 						name: 'Flat Merge',
 						value: 'flatMerge',
-						description: 'Deep merge multiple input JSON items into a single streamlined JSON object',
+						description: 'Merge multiple input JSON items into a single streamlined JSON object',
 						action: 'Flat Merge',
 					},
 					{
 						name: 'Evaluate Rules',
 						value: 'evaluateRules',
-						description: 'Process application data by sending it to a backend API',
+						description: 'Evaluate rules against data.',
 						action: 'Evaluate Rules',
 					},
 				],
@@ -121,22 +126,6 @@ export class Numeriquai implements INodeType {
 				description: 'The guideline ID to process',
 				placeholder: 'Enter guideline ID',
 			},
-			{
-				displayName: 'Authentication Token',
-				name: 'authToken',
-				type: 'string',
-				displayOptions: {
-					show: {
-						operation: ['evaluateRules'],
-					},
-				},
-				default: '',
-				required: true,
-				description: 'The bearer token for API authentication',
-				typeOptions: {
-					password: true,
-				},
-			},
 		],
 	};
 
@@ -155,7 +144,7 @@ export class Numeriquai implements INodeType {
 	}
 }
 
-async function executeFlatMerge(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
+export async function executeFlatMerge(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 		const returnData: INodeExecutionData[] = [];
 
 		try {
@@ -223,7 +212,7 @@ async function executeFlatMerge(this: IExecuteFunctions): Promise<INodeExecution
 		return [returnData];
 }
 
-async function executeEvaluateRules(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
+export async function executeEvaluateRules(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
 		const items = this.getInputData();
 		const returnData: INodeExecutionData[] = [];
 
@@ -233,15 +222,22 @@ async function executeEvaluateRules(this: IExecuteFunctions): Promise<INodeExecu
 
 		try {
 			const guidelineId = this.getNodeParameter('guidelineId', 0) as string;
-			const authToken = this.getNodeParameter('authToken', 0) as string;
-			const apiEndpoint = 'https://api.numeriquai.com/api/v1/audits/';
+			const credentials = await this.getCredentials('numeriquaiApi');
+			
+			if (!credentials) {
+				throw new NodeOperationError(this.getNode(), 'Credentials are required');
+			}
+
+			const apiToken = credentials.apiToken as string;
+			const apiUrl = 'https://api.numeriquai.com';
+			const apiEndpoint = `${apiUrl}/api/v1/audits/`;
 
 			// Validate required parameters
 			if (!guidelineId) {
 				throw new NodeOperationError(this.getNode(), 'Guideline ID is required');
 			}
-			if (!authToken) {
-				throw new NodeOperationError(this.getNode(), 'Authentication token is required');
+			if (!apiToken) {
+				throw new NodeOperationError(this.getNode(), 'API Key is required');
 			}
 
 			console.log(`[Numeriquai:EvaluateRules] All validations passed`);
@@ -277,7 +273,7 @@ async function executeEvaluateRules(this: IExecuteFunctions): Promise<INodeExecu
 				body: requestBody,
 				json: true,
 				headers: {
-					Authorization: `Bearer ${authToken}`,
+					Authorization: `Bearer ${apiToken}`,
 					'Content-Type': 'application/json',
 				},
 				timeout: 30000,

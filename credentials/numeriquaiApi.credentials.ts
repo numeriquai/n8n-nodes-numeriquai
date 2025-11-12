@@ -9,19 +9,13 @@ export class NumeriquaiApi implements ICredentialType {
 
 	properties: INodeProperties[] = [
 		{
-			displayName: 'API Token',
+			displayName: 'API Key',
 			name: 'apiToken',
 			type: 'string',
 			typeOptions: {
 				password: true,
 			},
 			default: '',
-		},
-		{
-			displayName: 'API URL',
-			name: 'apiUrl',
-			type: 'string',
-			default: 'https://api.numeriquai.com',
 		},
 	];
 }
