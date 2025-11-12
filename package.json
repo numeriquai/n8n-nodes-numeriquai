@@ -1,20 +1,21 @@
 {
-  "name": "vault-n8n",
+  "name": "n8n-nodes-numeriquai",
   "version": "0.1.0",
   "description": "Custom n8n nodes for Numeriquai",
   "keywords": [
-    "vault-n8n",
+    "n8n-community-node-package",
+    "n8n-nodes-numeriquai",
     "numeriquai"
   ],
   "license": "MIT",
-  "homepage": "https://github.com/numeriquai/vault-n8n",
+  "homepage": "https://github.com/numeriquai/n8n-nodes-numeriquai",
   "author": {
     "name": "Numeriquai",
     "email": "info@numeriquai.com"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/numeriquai/vault-n8n.git"
+    "url": "git+https://github.com/numeriquai/n8n-nodes-numeriquai.git"
   },
   "main": "dist/nodes/Numeriquai/index.js",
   "scripts": {
