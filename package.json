@@ -16,27 +16,28 @@
     "type": "git",
     "url": "git+https://github.com/numeriquai/vault-n8n.git"
   },
-	"main": "dist/nodes/Numeriquai/index.js",
-	"scripts": {
-		"build": "tsc && npm run copy-icons",
-		"copy-icons": "copyfiles \"nodes/**/*.{png,svg}\" dist/",
-		"dev": "tsc --watch",
-		"format": "prettier nodes credentials --write",
-		"lint": "eslint nodes credentials package.json",
-		"lintfix": "eslint nodes credentials package.json --fix",
-		"prepublishOnly": "npm run build && npm run lint -s"
-	},
-	"files": [
-		"dist"
-	],
-	"n8n": {
-		"n8nNodesApiVersion": 1,
-		"credentials": [],
-		"nodes": [
-			"dist/nodes/EvaluateRules/index.js",
-			"dist/nodes/FlatMerge/index.js"
-		]
-	},
+  "main": "dist/nodes/Numeriquai/index.js",
+  "scripts": {
+    "build": "tsc && npm run copy-icons",
+    "copy-icons": "copyfiles \"nodes/**/*.{png,svg,json}\" dist/",
+    "dev": "tsc --watch",
+    "format": "prettier nodes credentials --write",
+    "lint": "eslint nodes credentials package.json",
+    "lintfix": "eslint nodes credentials package.json --fix",
+    "prepublishOnly": "npm run build && npm run lint -s"
+  },
+  "files": [
+    "dist"
+  ],
+		"n8n": {
+			"n8nNodesApiVersion": 1,
+			"credentials": [
+				"dist/credentials/numeriquaiApi.credentials.js"
+			],
+			"nodes": [
+				"dist/nodes/Numeriquai/Numeriquai.node.js"
+			]
+		},
   "devDependencies": {
     "@types/node": "^20.0.0",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
@@ -48,7 +49,7 @@
     "typescript": "^5.0.0"
   },
   "peerDependencies": {
-    "n8n-workflow": "*",
-    "n8n-core": "*"
+    "n8n-core": "*",
+    "n8n-workflow": "*"
   }
 }

@@ -44,7 +44,7 @@ export class Numeriquai implements INodeType {
 		subtitle: '={{$parameter["operation"]}}',
 		description: 'Work with Numeriquai data processing tools',
 		defaults: {
-			name: 'Numeriquai',
+			name: '={{$parameter["operation"] === "flatMerge" ? "Flat Merge" : "Evaluate Rules"}}',
 		},
 		codex: {
 			categories: ['Data Transformation'],
@@ -70,13 +70,13 @@ export class Numeriquai implements INodeType {
 						name: 'Flat Merge',
 						value: 'flatMerge',
 						description: 'Deep merge multiple input JSON items into a single streamlined JSON object',
-						action: 'Evaluate Rules',
+						action: 'Flat Merge',
 					},
 					{
 						name: 'Evaluate Rules',
 						value: 'evaluateRules',
 						description: 'Process application data by sending it to a backend API',
-						action: 'Flat Merge',
+						action: 'Evaluate Rules',
 					},
 				],
 				default: 'evaluateRules',

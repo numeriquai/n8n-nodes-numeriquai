@@ -1,0 +1,97 @@
+{
+	"name": "numeriquai",
+	"displayName": "Numeriquai",
+	"description": "Work with Numeriquai data processing tools",
+	"icon": "logo-numeriquai.png",
+	"group": "transform",
+	"version": 1,
+	"defaults": {
+		"name": "={{$parameter[\"operation\"] === \"flatMerge\" ? \"Flat Merge\" : \"Evaluate Rules\"}}"
+	},
+	"inputs": "={{$parameter[\"operation\"] === \"flatMerge\" ? Array($parameter[\"numberOfInputs\"]).fill(\"main\") : [\"main\"]}}",
+	"outputs": ["main"],
+	"codex": {
+		"categories": ["Data Transformation"],
+		"subcategories": {
+			"Data Transformation": ["Numeriquai"]
+		}
+	},
+	"properties": [
+		{
+			"displayName": "Operation",
+			"name": "operation",
+			"type": "options",
+			"noDataExpression": true,
+			"default": "evaluateRules",
+			"options": [
+				{
+					"name": "Flat Merge",
+					"value": "flatMerge",
+					"description": "Deep merge multiple input JSON items into a single streamlined JSON object",
+					"action": "Flat Merge"
+				},
+				{
+					"name": "Evaluate Rules",
+					"value": "evaluateRules",
+					"description": "Process application data by sending it to a backend API",
+					"action": "Evaluate Rules"
+				}
+			]
+		},
+		{
+			"displayName": "Number of Inputs",
+			"name": "numberOfInputs",
+			"type": "options",
+			"default": 2,
+			"required": true,
+			"description": "Number of input connections to merge (add inputs using the + button on the node)",
+			"displayOptions": {
+				"show": {
+					"operation": ["flatMerge"]
+				}
+			},
+			"options": [
+				{ "name": "2", "value": 2 },
+				{ "name": "3", "value": 3 },
+				{ "name": "4", "value": 4 },
+				{ "name": "5", "value": 5 },
+				{ "name": "6", "value": 6 },
+				{ "name": "7", "value": 7 },
+				{ "name": "8", "value": 8 },
+				{ "name": "9", "value": 9 },
+				{ "name": "10", "value": 10 }
+			]
+		},
+		{
+			"displayName": "Guideline ID",
+			"name": "guidelineId",
+			"type": "string",
+			"default": "",
+			"required": true,
+			"description": "The guideline ID to process",
+			"placeholder": "Enter guideline ID",
+			"displayOptions": {
+				"show": {
+					"operation": ["evaluateRules"]
+				}
+			}
+		},
+		{
+			"displayName": "Authentication Token",
+			"name": "authToken",
+			"type": "string",
+			"default": "",
+			"required": true,
+			"description": "The bearer token for API authentication",
+			"typeOptions": {
+				"password": true
+			},
+			"displayOptions": {
+				"show": {
+					"operation": ["evaluateRules"]
+				}
+			}
+		}
+	]
+}
+
