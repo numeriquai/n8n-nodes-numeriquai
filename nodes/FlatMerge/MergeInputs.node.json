@@ -2,7 +2,7 @@
 	"name": "Flat Merge",
 	"displayName": "Flat Merge",
 	"description": "Deep merge multiple input JSON items into a single streamlined JSON object",
-	"icon": "mergeInputs.svg",
+	"icon": "logo-numeriquai.png",
 	"group": "transform",
 	"version": 1,
 	"defaults": {

@@ -38,13 +38,26 @@ export class MergeInputs implements INodeType {
 	description: INodeTypeDescription & { maxNumberOfInputs?: number } = {
 		displayName: 'Flat Merge',
 		name: 'mergeInputs',
-		icon: 'file:mergeInputs.svg',
+		icon: 'file:logo-numeriquai.png',
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["numberOfInputs"]}} inputs',
 		description: 'Deep merge multiple input JSON items from different connections into a single streamlined JSON object',
 		defaults: {
 			name: 'Flat Merge',
+		},
+		codex: {
+			categories: ['Data Transformation'],
+			subcategories: {
+				'Data Transformation': ['Numeriquai'],
+			},
+			resources: {
+				primaryDocumentation: [
+					{
+						url: 'https://numeriquai.com',
+					},
+				],
+			},
 		},
 		// @ts-ignore - Dynamic inputs using expression syntax
 		inputs: '={{ Array($parameter["numberOfInputs"]).fill("main") }}',

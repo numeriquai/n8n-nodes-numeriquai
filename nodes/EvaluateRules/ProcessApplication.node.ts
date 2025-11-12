@@ -11,13 +11,26 @@ export class ProcessApplication implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'Evaluate Rules',
 		name: 'processApplication',
-		icon: 'file:processApplication.svg',
+		icon: 'file:logo-numeriquai.png',
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["guidelineId"]}}',
 		description: 'Process application data from previous nodes by sending it to a backend API',
 		defaults: {
 			name: 'Evaluate Rules',
+		},
+		codex: {
+			categories: ['Data Transformation'],
+			subcategories: {
+				'Data Transformation': ['Numeriquai'],
+			},
+			resources: {
+				primaryDocumentation: [
+					{
+						url: 'https://numeriquai.com',
+					},
+				],
+			},
 		},
 		inputs: ['main'],
 		outputs: ['main'],

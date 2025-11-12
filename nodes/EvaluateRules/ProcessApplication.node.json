@@ -2,7 +2,7 @@
 	"name": "Evaluate Rules",
 	"displayName": "Evaluate Rules",
 	"description": "Process application data by sending it to a backend API",
-	"icon": "processApplication.svg",
+	"icon": "logo-numeriquai.png",
 	"group": "transform",
 	"version": 1,
 	"defaults": {
