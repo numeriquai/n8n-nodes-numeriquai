@@ -1,4 +1,5 @@
 import {
+	IDataObject,
 	IExecuteFunctions,
 	INodeExecutionData,
 	INodeType,
@@ -9,24 +10,26 @@ import {
 /**
  * Deep merge two objects recursively
  */
-export function deepMerge(target: Record<string, any>, source: Record<string, any>): Record<string, any> {
+export function deepMerge(target: IDataObject, source: IDataObject): IDataObject {
 	const output = { ...target };
 
 	for (const key in source) {
-		if (source.hasOwnProperty(key)) {
+		if (Object.prototype.hasOwnProperty.call(source, key)) {
+			const sourceValue = source[key];
+			const targetValue = target[key];
 			if (
-				typeof source[key] === 'object' &&
-				source[key] !== null &&
-				!Array.isArray(source[key]) &&
-				typeof target[key] === 'object' &&
-				target[key] !== null &&
-				!Array.isArray(target[key])
+				typeof sourceValue === 'object' &&
+				sourceValue !== null &&
+				!Array.isArray(sourceValue) &&
+				typeof targetValue === 'object' &&
+				targetValue !== null &&
+				!Array.isArray(targetValue)
 			) {
 				// Recursively merge nested objects
-				output[key] = deepMerge(target[key], source[key]);
+				output[key] = deepMerge(targetValue as IDataObject, sourceValue as IDataObject);
 			} else {
 				// Overwrite with source value
-				output[key] = source[key];
+				output[key] = sourceValue;
 			}
 		}
 	}
@@ -38,7 +41,7 @@ export class Numeriquai implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'Numeriquai',
 		name: 'numeriquai',
-		icon: 'file:logo-numeriquai.png',
+		icon: 'file:logo-numeriquai.svg',
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["operation"] === "flatMerge" ? "Flat Merge" : "Evaluate Rules"}}',
@@ -75,13 +78,13 @@ export class Numeriquai implements INodeType {
 						name: 'Flat Merge',
 						value: 'flatMerge',
 						description: 'Merge multiple input JSON items into a single streamlined JSON object',
-						action: 'Flat Merge',
+						action: 'Flat merge',
 					},
 					{
 						name: 'Evaluate Rules',
 						value: 'evaluateRules',
-						description: 'Evaluate rules against data.',
-						action: 'Evaluate Rules',
+						description: 'Evaluate rules against data',
+						action: 'Evaluate rules',
 					},
 				],
 				default: 'evaluateRules',
@@ -161,16 +164,16 @@ export async function executeFlatMerge(this: IExecuteFunctions): Promise<INodeEx
 		console.log(`[Numeriquai:FlatMerge] Total items to merge: ${allItems.length}`);
 
 		// Merge all items into a single object using deep merge
-		let mergedInputs: Record<string, any> = {};
+		let mergedInputs: IDataObject = {};
 
 		if (Array.isArray(allItems)) {
 			for (const item of allItems) {
-				const itemJson = (item as any as { json: Record<string, any> }).json;
+				const itemJson = item.json;
 				// Always use deep merge to recursively merge nested objects
 				mergedInputs = deepMerge(mergedInputs, itemJson);
 			}
 		} else if (typeof allItems === 'object' && allItems !== null) {
-			mergedInputs = { ...(allItems as any as { json: Record<string, any> }).json };
+			mergedInputs = { ...(allItems as INodeExecutionData).json };
 		}
 
 		console.log(`[Numeriquai:FlatMerge] Final merged object has ${Object.keys(mergedInputs).length} keys: ${Object.keys(mergedInputs).join(', ')}`);

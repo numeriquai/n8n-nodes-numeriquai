@@ -129,3 +129,5 @@ Thumbs.db
 # Build output
 dist/
 build/
+
+PUBLISHING_CHECKLIST.md

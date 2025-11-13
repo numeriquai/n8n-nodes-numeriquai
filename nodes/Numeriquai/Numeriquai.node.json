@@ -2,7 +2,7 @@
 	"name": "numeriquai",
 	"displayName": "Numeriquai",
 	"description": "Numeriquai data processing tools",
-	"icon": "logo-numeriquai.png",
+	"icon": "logo-numeriquai.svg",
 	"group": "transform",
 	"version": 1,
 	"subtitle": "={{$parameter[\"operation\"] === \"flatMerge\" ? \"Flat Merge\" : \"Evaluate Rules\"}}",

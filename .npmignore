@@ -1,0 +1,34 @@
+# Source files (only dist should be published)
+nodes/
+credentials/
+translations/
+
+# Development files
+tsconfig.json
+.gitignore
+.npmignore
+
+# Build artifacts (already in dist)
+*.ts
+!*.d.ts
+
+# Development dependencies
+node_modules/
+*.log
+.DS_Store
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Test files (if any)
+test/
+tests/
+*.test.ts
+*.spec.ts
+
+# Note: README.md, LICENSE, and package.json are automatically included by npm
+# even if not listed in the files array
+

@@ -4,91 +4,188 @@ A custom n8n community node for Numeriquai data processing tools.
 
 ## Features
 
-- Send POST requests to a configurable API endpoint
-- Include guideline ID and flexible JSON input data
-- Bearer token authentication
+- **Two Operations**:
+  - **Flat Merge**: Merge multiple input JSON items into a single streamlined JSON object (credentials configured but not used)
+  - **Evaluate Rules**: Evaluate rules against data using Numeriquai API (requires API credentials)
+- Deep merge functionality for nested object merging
+- API integration with Numeriquai's audit service
+- Bearer token authentication via credentials
 - Error handling with continue on fail option
-- Configurable API endpoint URL
 
 ## Installation
 
-### For n8n Cloud or Self-hosted n8n
+### Option 1: Install from npm (Recommended for Production)
+
+If the package is published to npm:
 
 1. Go to your n8n instance
-2. Navigate to Settings > Community Nodes
-3. Click "Install a community node"
+2. Navigate to **Settings** > **Community Nodes**
+3. Click **"Install a community node"**
 4. Enter the package name: `n8n-nodes-numeriquai`
-5. Click "Install"
+5. Click **"Install"**
+6. Wait for the installation to complete (you may need to restart n8n)
 
-### For Local Development
+### Option 2: Local Development Installation
 
-1. Clone this repository
-2. Install dependencies:
+For local development and testing:
+
+1. **Clone this repository** (if not already done):
+   ```bash
+   git clone <repository-url>
+   cd n8n-nodes-numeriquai
+   ```
+
+2. **Install dependencies**:
    ```bash
    npm install
    ```
-3. Build the node:
+
+3. **Build the node**:
    ```bash
    npm run build
    ```
-4. Link the node to n8n:
+   This compiles TypeScript and copies assets to the `dist/` folder.
+
+4. **Link the node to n8n**:
+   
+   **For n8n installed globally:**
    ```bash
+   # Create npm link
    npm link
+   
+   # Link to n8n's nodes directory
    cd ~/.n8n/nodes
    npm link n8n-nodes-numeriquai
    ```
+   
+   **For n8n installed locally or Docker:**
+   ```bash
+   # Create npm link
+   npm link
+   
+   # Find your n8n installation directory and link there
+   # For Docker: You may need to mount the volume or copy files
+   # For local: Link to the n8n nodes directory in your project
+   ```
+
+5. **Restart n8n**:
+   ```bash
+   n8n start
+   ```
+   Or restart your n8n Docker container if using Docker.
+
+### Option 3: Manual Installation (Alternative)
+
+If npm link doesn't work, you can manually copy files:
+
+1. Build the project: `npm run build`
+2. Copy the `dist/` folder to your n8n nodes directory:
+   ```bash
+   cp -r dist ~/.n8n/nodes/n8n-nodes-numeriquai
+   ```
+3. Install dependencies in the copied location:
+   ```bash
+   cd ~/.n8n/nodes/n8n-nodes-numeriquai
+   npm install --production
+   ```
+4. Restart n8n
 
 ## Usage
 
-### Node Parameters
+The Numeriquai node supports two operations:
 
+### Operation 1: Flat Merge
+
+Merge multiple input JSON items into a single streamlined JSON object using deep merge.
+
+**Parameters:**
+- **Operation**: Select "Flat Merge"
+- **Number of Inputs**: Choose how many input connections to merge (2-10)
+  - Use the "+" button on the node to add multiple input connections
+
+**Requirements:**
+- Multiple input connections (2-10)
+- Note: While credentials are configured at the node level, they are not used by the Flat Merge operation
+
+**Example:**
+- Input 1: `{ "name": "John", "age": 30 }`
+- Input 2: `{ "city": "Paris", "country": "France" }`
+- Output: `{ "name": "John", "age": 30, "city": "Paris", "country": "France" }`
+
+### Operation 2: Evaluate Rules
+
+Evaluate rules against data using Numeriquai's API.
+
+**Parameters:**
+- **Operation**: Select "Evaluate Rules" (default)
 - **Guideline ID** (required): The unique identifier for the guideline to process
-- **Input Data** (required): JSON object containing the data to send to the API
-- **Authentication Token** (required): API Key for API authentication
-- **API Endpoint** (required): The URL endpoint to send the request to (default: `http://localhost:8000/api/v1/audits`)
 
-### Example Workflow
+**Requirements:**
+- Numeriquai API credentials (API Key)
+- Single input connection with JSON data
 
-1. Add the "Numeriquai" node to your workflow
-2. Configure the parameters:
-   - Guideline ID: `"guideline-123"`
-   - Input Data: 
-     ```json
-     {
-       "applicantName": "John Doe",
-       "applicationType": "standard",
-       "priority": "high"
-     }
-     ```
-   - Authentication Token: `"your-bearer-token-here"`
-   - API Endpoint: `"http://localhost:8000/api/v1/audits"`
+**Example Workflow:**
 
-3. The node will send a POST request with the following structure:
+1. Add a "Set" node with your input data:
    ```json
    {
-     "guidelineId": "guideline-123",
      "applicantName": "John Doe",
      "applicationType": "standard",
      "priority": "high"
    }
    ```
 
-4. The response from the API will be returned as JSON output
+2. Add the "Numeriquai" node and configure:
+   - **Operation**: "Evaluate Rules"
+   - **Credential to connect with**: Create/select "Numeriquai API" credential
+     - Enter your API Key
+   - **Guideline ID**: `"guideline-123"`
 
-### API Request Format
+3. Connect the Set node to the Numeriquai node
+
+4. Execute the workflow
+
+5. The node will send a POST request to `https://api.numeriquai.com/api/v1/audits/` with:
+   ```json
+   {
+     "reference": "Test run N8N guidline HH:MM",
+     "description": "N8N test",
+     "guideline_id": "guideline-123",
+     "inputs": {
+       "applicantName": "John Doe",
+       "applicationType": "standard",
+       "priority": "high"
+     }
+   }
+   ```
+   Note: The `reference` field includes a timestamp (HH:MM format) automatically generated by the node.
+
+6. The API response will be returned as JSON output
+
+### API Request Format (Evaluate Rules)
 
 The node sends a POST request with:
-- **URL**: Configurable endpoint (default: `http://localhost:8000/api/v1/audits`)
+- **URL**: `https://api.numeriquai.com/api/v1/audits/` (hardcoded)
 - **Headers**: 
-  - `X-API-Key: {token}`
+  - `X-API-Key: {your-api-key}`
   - `Content-Type: application/json`
-- **Body**: JSON object containing `guidelineId` merged with the input data
+- **Body**: 
+  ```json
+  {
+    "reference": "Test run N8N guidline {timestamp}",
+    "description": "N8N test",
+    "guideline_id": "{guidelineId}",
+    "inputs": { /* your input data */ }
+  }
+  ```
 
 ### Error Handling
 
-- If the API request fails, the node will throw an error by default
+- If an operation fails, the node will throw an error by default
 - Enable "Continue on Fail" in the node settings to return error information instead of stopping the workflow
-- Validation errors for missing required parameters will always stop execution
+- Validation errors for missing required parameters (e.g., Guideline ID, credentials) will always stop execution
+- For Flat Merge: Errors during merge operations can be handled with "Continue on Fail"
+- For Evaluate Rules: API errors (network, authentication, etc.) can be handled with "Continue on Fail"
 
 ## Development
 
@@ -110,21 +207,316 @@ npm run build
 npm run lint
 ```
 
-### Testing
+### Testing & Verification
 
-1. Build the node: `npm run build`
-2. Link to n8n: `npm link`
-3. Start n8n: `n8n start`
-4. The node will be available in the n8n editor
+After installing the node, verify it works correctly:
 
-## Publishing
+#### Step 1: Verify Node is Available
 
-To publish this node to the npm registry:
+1. **Start n8n** (if not already running):
+   ```bash
+   n8n start
+   ```
 
-1. Update the version in `package.json`
-2. Build the project: `npm run build`
-3. Run linting: `npm run lint`
-4. Publish: `npm publish`
+2. **Open n8n in your browser** (usually `http://localhost:5678`)
+
+3. **Create a new workflow** or open an existing one
+
+4. **Search for "Numeriquai"** in the node palette (click the "+" button or press `/`)
+
+5. **Verify the node appears** - You should see:
+   - Node name: "Numeriquai"
+   - Icon: Numeriquai logo
+   - Category: Transform
+
+#### Step 2: Test Flat Merge Operation
+
+1. **Add a Numeriquai node** to your workflow
+
+2. **Set Operation to "Flat Merge"**
+
+3. **Configure Number of Inputs** (e.g., 2)
+
+4. **Add input nodes** (e.g., two "Set" nodes):
+   - **Set Node 1**: Output `{ "name": "John", "age": 30 }`
+   - **Set Node 2**: Output `{ "city": "Paris", "country": "France" }`
+
+5. **Connect both Set nodes** to the Numeriquai node
+
+6. **Execute the workflow** (click "Execute Workflow")
+
+7. **Verify output**: The Numeriquai node should output:
+   ```json
+   {
+     "name": "John",
+     "age": 30,
+     "city": "Paris",
+     "country": "France"
+   }
+   ```
+
+#### Step 3: Test Evaluate Rules Operation
+
+1. **Add a Numeriquai node** to your workflow
+
+2. **Set Operation to "Evaluate Rules"**
+
+3. **Configure credentials**:
+   - Click on the node
+   - Click **"Credential to connect with"** dropdown
+   - Click **"Create New Credential"**
+   - Select **"Numeriquai API"**
+   - Enter your API Key
+   - Click **"Save"**
+
+4. **Configure the node**:
+   - **Guideline ID**: Enter a valid guideline ID (e.g., `"test-guideline-123"`)
+
+5. **Add input data**:
+   - Add a "Set" node before Numeriquai
+   - Configure it with test data:
+     ```json
+     {
+       "applicantName": "John Doe",
+       "applicationType": "standard",
+       "priority": "high"
+     }
+     ```
+   - Connect the Set node to Numeriquai
+
+6. **Execute the workflow**
+
+7. **Verify the API call**:
+   - Check the node output - it should contain the API response
+   - Check the execution log for any errors
+   - Verify the request was sent to: `https://api.numeriquai.com/api/v1/audits/`
+
+#### Step 4: Troubleshooting
+
+If the node doesn't appear or doesn't work:
+
+1. **Check n8n logs** for errors:
+   ```bash
+   # If running n8n locally, check terminal output
+   # Look for errors related to "numeriquai" or "community nodes"
+   ```
+
+2. **Verify the build**:
+   ```bash
+   npm run build
+   ls -la dist/
+   # Should see dist/nodes/Numeriquai/ and dist/credentials/
+   ```
+
+3. **Check node installation**:
+   ```bash
+   # Verify the link exists
+   ls -la ~/.n8n/nodes/ | grep numeriquai
+   ```
+
+4. **Clear n8n cache** (if needed):
+   - Stop n8n
+   - Delete `~/.n8n/.cache/` (if exists)
+   - Restart n8n
+
+5. **Check n8n version compatibility**:
+   - Ensure you're using a compatible n8n version
+   - Check `package.json` for peer dependencies
+
+6. **Verify credentials** (for Evaluate Rules operation):
+   - Ensure the Numeriquai API credential type is available
+   - Check that credentials can be created and saved
+   - Note: Flat Merge operation does not require credentials
+
+#### Step 5: Verify in Production
+
+For production deployments:
+
+1. **Test with real API endpoints**
+2. **Verify error handling** (test with invalid credentials/guidelines)
+3. **Check performance** with larger datasets
+4. **Monitor logs** for any runtime errors
+
+## Publishing to npm
+
+To publish this node to the npm registry so it can be installed via n8n's Community Nodes feature:
+
+### Prerequisites
+
+1. **Create an npm account** (if you don't have one):
+   - Go to [npmjs.com](https://www.npmjs.com/signup)
+   - Create a free account
+   - Verify your email address
+
+2. **Login to npm via command line**:
+   ```bash
+   npm login
+   ```
+   Enter your username, password, and email when prompted.
+
+3. **Verify you're logged in**:
+   ```bash
+   npm whoami
+   ```
+
+### Pre-Publishing Checklist
+
+Before publishing, ensure:
+
+- [ ] **Version number is correct** in `package.json` (follows [semantic versioning](https://semver.org/))
+- [ ] **Package name is available** on npm (check at `https://www.npmjs.com/package/n8n-nodes-numeriquai`)
+- [ ] **All code is tested** and working
+- [ ] **README.md is complete** and accurate
+- [ ] **Build succeeds** without errors
+- [ ] **Linting passes** without errors
+- [ ] **Git repository is clean** (commit all changes)
+
+### Publishing Steps
+
+1. **Update version number** in `package.json`:
+   ```bash
+   # For patch release (bug fixes)
+   npm version patch
+   
+   # For minor release (new features)
+   npm version minor
+   
+   # For major release (breaking changes)
+   npm version major
+   ```
+   Or manually edit `package.json` and update the `version` field (e.g., `"0.1.0"` → `"0.1.1"`).
+
+2. **Build the project**:
+   ```bash
+   npm run build
+   ```
+   This compiles TypeScript and copies assets to `dist/`.
+
+3. **Verify the build**:
+   ```bash
+   ls -la dist/
+   # Should see:
+   # - dist/nodes/Numeriquai/ (with .js files)
+   # - dist/credentials/ (with .js files)
+   ```
+
+4. **Run linting** (optional but recommended):
+   ```bash
+   npm run lint
+   ```
+   Fix any linting errors before publishing.
+
+5. **Test the package locally** (optional but recommended):
+   ```bash
+   # Create a test package
+   npm pack
+   # This creates a .tgz file you can inspect
+   
+   # Or test install locally
+   npm link
+   cd ~/.n8n/nodes
+   npm link n8n-nodes-numeriquai
+   # Test in n8n, then unlink when done
+   ```
+
+6. **Publish to npm**:
+   ```bash
+   npm publish
+   ```
+   
+   **For first-time publishing**, npm will ask you to verify:
+   - Package name: `n8n-nodes-numeriquai`
+   - Version: (e.g., `0.1.0`)
+   - Files to be published
+   
+   Type `yes` to confirm.
+
+7. **Verify publication**:
+   - Check your package on npm: `https://www.npmjs.com/package/n8n-nodes-numeriquai`
+   - The package should be visible and installable
+
+### Publishing Scoped Packages (Optional)
+
+If you want to publish under a scoped name (e.g., `@numeriquai/n8n-nodes-numeriquai`):
+
+1. Update `package.json` name to `@numeriquai/n8n-nodes-numeriquai`
+2. Publish with public access:
+   ```bash
+   npm publish --access public
+   ```
+
+### After Publishing
+
+1. **Tag the release in Git** (if using version command):
+   ```bash
+   git push --tags
+   git push
+   ```
+
+2. **Create a GitHub release** (if applicable):
+   - Go to your GitHub repository
+   - Create a new release
+   - Tag the version (e.g., `v0.1.0`)
+   - Add release notes
+
+3. **Test installation via n8n**:
+   - In n8n: Settings → Community Nodes
+   - Install: `n8n-nodes-numeriquai`
+   - Verify it works correctly
+
+### Updating a Published Package
+
+To publish an update:
+
+1. Update the version number (use `npm version patch/minor/major`)
+2. Rebuild: `npm run build`
+3. Publish: `npm publish`
+
+### Troubleshooting
+
+**"Package name already exists"**:
+- The package name `n8n-nodes-numeriquai` is already taken
+- Choose a different name or contact the owner
+- Update `package.json` with the new name
+
+**"You do not have permission"**:
+- You're not logged in: run `npm login`
+- You don't own the package: contact the owner or use a different name
+
+**"Invalid package name"**:
+- Package name must be lowercase
+- Can contain hyphens and underscores
+- Must start with a letter
+
+**Build fails**:
+- Check TypeScript errors: `npm run build`
+- Fix any compilation errors
+- Ensure all dependencies are installed: `npm install`
+
+### Publishing Checklist Summary
+
+```bash
+# 1. Login to npm
+npm login
+
+# 2. Update version
+npm version patch  # or minor/major
+
+# 3. Build
+npm run build
+
+# 4. Lint (optional)
+npm run lint
+
+# 5. Test locally (optional)
+npm pack
+
+# 6. Publish
+npm publish
+
+# 7. Verify
+# Visit https://www.npmjs.com/package/n8n-nodes-numeriquai
+```
 
 ## Contributing
 
