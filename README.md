@@ -135,7 +135,7 @@ Evaluate rules against data using Numeriquai's API.
 
 4. Execute the workflow
 
-5. The node will send a POST request to `https://api.numeriquai.com/api/v1/audits/` with:
+5. The node will send a POST request to Numeriquai with:
    ```json
    {
      "reference": "Test run N8N guidline HH:MM",
@@ -155,7 +155,7 @@ Evaluate rules against data using Numeriquai's API.
 ### API Request Format (Evaluate Rules)
 
 The node sends a POST request with:
-- **URL**: `https://api.numeriquai.com/api/v1/audits/` (hardcoded)
+- **URL**: `NUMERIQUAI_BACKEND_URL` (hardcoded)
 - **Headers**: 
   - `X-API-Key: {your-api-key}`
   - `Content-Type: application/json`
@@ -259,7 +259,7 @@ After installing the node, verify it works correctly:
 7. **Verify the API call**:
    - Check the node output - it should contain the API response
    - Check the execution log for any errors
-   - Verify the request was sent to: `https://api.numeriquai.com/api/v1/audits/`
+   - Verify the request was sent to: Numeriquai Server
 
 #### Step 4: Troubleshooting
 
