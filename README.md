@@ -3,7 +3,7 @@
 [![npm version](https://img.shields.io/npm/v/n8n-nodes-numeriquai.svg)](https://www.npmjs.com/package/n8n-nodes-numeriquai)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A custom n8n community node package for Numeriquai data processing tools. This package provides nodes for integrating Numeriquai's audit and rule evaluation services into your n8n workflows.
+A custom n8n community node package for Numeriquai data processing tools. This package provides nodes for integrating Numeriquai's rule evaluation services into your n8n workflows.
 
 ## Features
 
@@ -30,15 +30,21 @@ The package is available on npm: [https://www.npmjs.com/package/n8n-nodes-numeri
 
 ## Quick Start
 
-After installation, you can use the Numeriquai node in your workflows:
+After installation, use the recommended workflow pattern:
 
-1. **Add the Numeriquai node** to your workflow
-2. **Choose an operation**:
-   - **Flat Merge**: Merge multiple JSON inputs
-   - **Evaluate Rules**: Evaluate rules via Numeriquai API
-3. **Configure credentials** (required for Evaluate Rules):
-   - Create a "Numeriquai API" credential with your API key
+1. **Connect your input nodes** - Connect multiple nodes that provide JSON data
+2. **Add Numeriquai node (Flat Merge)**:
+   - Set operation to "Flat Merge"
+   - Configure number of inputs to match your input nodes
+   - Connect all input nodes to this node
+3. **Add Numeriquai node (Evaluate Rules)**:
+   - Set operation to "Evaluate Rules"
+   - Configure credentials: Create a "Numeriquai API" credential with your API key
+   - Enter your Guideline ID
+   - Connect the Flat Merge node output to this node
 4. **Execute your workflow**
+
+The Flat Merge node will process and format inputs from different nodes, then pass the merged data to the Evaluate Rules node for Numeriquai API evaluation.
 
 ## Local Development
 
@@ -82,11 +88,20 @@ For developers who want to contribute or test locally:
 
 ## Usage
 
-The Numeriquai node supports two operations:
+The Numeriquai node supports two operations that work together in a recommended workflow pattern:
+
+### Recommended Workflow Pattern
+
+**Use Flat Merge first, then Evaluate Rules:**
+
+1. **Flat Merge Node**: Processes and formats inputs from multiple different nodes
+2. **Evaluate Rules Node**: Receives the merged data and evaluates rules via Numeriquai API
+
+This pattern allows you to combine data from various sources before sending it to Numeriquai for rule evaluation.
 
 ### Operation 1: Flat Merge
 
-Merge multiple input JSON items into a single streamlined JSON object using deep merge.
+Merge multiple input JSON items into a single streamlined JSON object using deep merge. This operation processes and formats input from different nodes.
 
 **Parameters:**
 - **Operation**: Select "Flat Merge"
@@ -104,7 +119,7 @@ Merge multiple input JSON items into a single streamlined JSON object using deep
 
 ### Operation 2: Evaluate Rules
 
-Evaluate rules against data using Numeriquai's API.
+Evaluate rules against data using Numeriquai's API. This operation receives processed data (typically from a Flat Merge node) and sends it to Numeriquai for rule evaluation.
 
 **Parameters:**
 - **Operation**: Select "Evaluate Rules" (default)
@@ -112,30 +127,28 @@ Evaluate rules against data using Numeriquai's API.
 
 **Requirements:**
 - Numeriquai API credentials (API Key)
-- Single input connection with JSON data
+- Single input connection with JSON data (typically from a Flat Merge node)
 
-**Example Workflow:**
+**Recommended Workflow:**
 
-1. Add a "Set" node with your input data:
-   ```json
-   {
-     "applicantName": "John Doe",
-     "applicationType": "standard",
-     "priority": "high"
-   }
-   ```
+1. **Connect your input data nodes** - Connect multiple nodes that provide JSON data (e.g., API calls, database queries, webhooks, etc.)
 
-2. Add the "Numeriquai" node and configure:
+2. **Add the first Numeriquai node (Flat Merge)**:
+   - **Operation**: "Flat Merge"
+   - **Number of Inputs**: Set to match the number of input nodes you're connecting
+   - **Credential to connect with**: Create/select "Numeriquai API" credential (required but not used)
+   - Connect all your input nodes to this Flat Merge node
+
+3. **Add the second Numeriquai node (Evaluate Rules)**:
    - **Operation**: "Evaluate Rules"
-   - **Credential to connect with**: Create/select "Numeriquai API" credential
+   - **Credential to connect with**: Use the same "Numeriquai API" credential
      - Enter your API Key
    - **Guideline ID**: `"guideline-123"`
+   - Connect the Flat Merge node output to this Evaluate Rules node
 
-3. Connect the Set node to the Numeriquai node
+4. **Execute the workflow**
 
-4. Execute the workflow
-
-5. The node will send a POST request to Numeriquai with:
+5. The Evaluate Rules node will send a POST request to Numeriquai with the merged data:
    ```json
    {
      "reference": "Test run N8N guidline HH:MM",
@@ -207,11 +220,11 @@ After installing the node, verify it works correctly:
 
 3. **Configure Number of Inputs** (e.g., 2)
 
-4. **Add input nodes** (e.g., two "Set" nodes):
-   - **Set Node 1**: Output `{ "name": "John", "age": 30 }`
-   - **Set Node 2**: Output `{ "city": "Paris", "country": "France" }`
+4. **Connect your input nodes** - Connect two or more nodes that provide JSON data:
+   - **Input Node 1**: Should output `{ "name": "John", "age": 30 }`
+   - **Input Node 2**: Should output `{ "city": "Paris", "country": "France" }`
 
-5. **Connect both Set nodes** to the Numeriquai node
+5. **Connect your input nodes** to the Numeriquai node
 
 6. **Execute the workflow** (click "Execute Workflow")
 
@@ -225,41 +238,37 @@ After installing the node, verify it works correctly:
    }
    ```
 
-#### Step 3: Test Evaluate Rules Operation
+#### Step 3: Test Complete Workflow (Flat Merge → Evaluate Rules)
 
-1. **Add a Numeriquai node** to your workflow
+1. **Connect your input nodes** - Connect multiple nodes that provide JSON data
 
-2. **Set Operation to "Evaluate Rules"**
+2. **Add the first Numeriquai node (Flat Merge)**:
+   - Set **Operation** to "Flat Merge"
+   - Configure **Number of Inputs** to match your input nodes
+   - Configure credentials (required but not used for Flat Merge)
 
-3. **Configure credentials**:
-   - Click on the node
-   - Click **"Credential to connect with"** dropdown
-   - Click **"Create New Credential"**
-   - Select **"Numeriquai API"**
-   - Enter your API Key
-   - Click **"Save"**
+3. **Connect your input nodes** to the Flat Merge node
 
-4. **Configure the node**:
+4. **Add the second Numeriquai node (Evaluate Rules)**:
+   - Set **Operation** to "Evaluate Rules"
+   - **Configure credentials**:
+     - Click on the node
+     - Click **"Credential to connect with"** dropdown
+     - Click **"Create New Credential"** (or select existing)
+     - Select **"Numeriquai API"**
+     - Enter your API Key
+     - Click **"Save"**
    - **Guideline ID**: Enter a valid guideline ID (e.g., `"test-guideline-123"`)
 
-5. **Add input data**:
-   - Add a "Set" node before Numeriquai
-   - Configure it with test data:
-     ```json
-     {
-       "applicantName": "John Doe",
-       "applicationType": "standard",
-       "priority": "high"
-     }
-     ```
-   - Connect the Set node to Numeriquai
+5. **Connect the Flat Merge node output** to the Evaluate Rules node
 
 6. **Execute the workflow**
 
-7. **Verify the API call**:
-   - Check the node output - it should contain the API response
+7. **Verify the workflow**:
+   - Check the Flat Merge node output - it should contain merged data from all inputs
+   - Check the Evaluate Rules node output - it should contain the API response
    - Check the execution log for any errors
-   - Verify the request was sent to: Numeriquai Server
+   - Verify the request was sent to: `https://api.numeriquai.com/api/v1/audits/`
 
 #### Step 4: Troubleshooting
 
