@@ -1,11 +1,14 @@
 # n8n-nodes-numeriquai
 
-A custom n8n community node for Numeriquai data processing tools.
+[![npm version](https://img.shields.io/npm/v/n8n-nodes-numeriquai.svg)](https://www.npmjs.com/package/n8n-nodes-numeriquai)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+A custom n8n community node package for Numeriquai data processing tools. This package provides nodes for integrating Numeriquai's audit and rule evaluation services into your n8n workflows.
 
 ## Features
 
 - **Two Operations**:
-  - **Flat Merge**: Merge multiple input JSON items into a single streamlined JSON object (credentials configured but not used)
+  - **Flat Merge**: Merge multiple input JSON items into a single streamlined JSON object using deep merge
   - **Evaluate Rules**: Evaluate rules against data using Numeriquai API (requires API credentials)
 - Deep merge functionality for nested object merging
 - API integration with Numeriquai's audit service
@@ -14,9 +17,7 @@ A custom n8n community node for Numeriquai data processing tools.
 
 ## Installation
 
-### Option 1: Install from npm (Recommended for Production)
-
-If the package is published to npm:
+### Install from npm (Recommended)
 
 1. Go to your n8n instance
 2. Navigate to **Settings** > **Community Nodes**
@@ -25,13 +26,35 @@ If the package is published to npm:
 5. Click **"Install"**
 6. Wait for the installation to complete (you may need to restart n8n)
 
-### Option 2: Local Development Installation
+The package is available on npm: [https://www.npmjs.com/package/n8n-nodes-numeriquai](https://www.npmjs.com/package/n8n-nodes-numeriquai)
 
-For local development and testing:
+## Quick Start
 
-1. **Clone this repository** (if not already done):
+After installation, you can use the Numeriquai node in your workflows:
+
+1. **Add the Numeriquai node** to your workflow
+2. **Choose an operation**:
+   - **Flat Merge**: Merge multiple JSON inputs
+   - **Evaluate Rules**: Evaluate rules via Numeriquai API
+3. **Configure credentials** (required for Evaluate Rules):
+   - Create a "Numeriquai API" credential with your API key
+4. **Execute your workflow**
+
+## Local Development
+
+For developers who want to contribute or test locally:
+
+### Prerequisites
+
+- Node.js (version 18.17.0 or higher)
+- npm
+- n8n instance for testing
+
+### Setup
+
+1. **Clone the repository**:
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/numeriquai/n8n-nodes-numeriquai.git
    cd n8n-nodes-numeriquai
    ```
 
@@ -40,15 +63,12 @@ For local development and testing:
    npm install
    ```
 
-3. **Build the node**:
+3. **Build the project**:
    ```bash
    npm run build
    ```
-   This compiles TypeScript and copies assets to the `dist/` folder.
 
-4. **Link the node to n8n**:
-   
-   **For n8n installed globally:**
+4. **Link for local development**:
    ```bash
    # Create npm link
    npm link
@@ -57,38 +77,8 @@ For local development and testing:
    cd ~/.n8n/nodes
    npm link n8n-nodes-numeriquai
    ```
-   
-   **For n8n installed locally or Docker:**
-   ```bash
-   # Create npm link
-   npm link
-   
-   # Find your n8n installation directory and link there
-   # For Docker: You may need to mount the volume or copy files
-   # For local: Link to the n8n nodes directory in your project
-   ```
 
-5. **Restart n8n**:
-   ```bash
-   n8n start
-   ```
-   Or restart your n8n Docker container if using Docker.
-
-### Option 3: Manual Installation (Alternative)
-
-If npm link doesn't work, you can manually copy files:
-
-1. Build the project: `npm run build`
-2. Copy the `dist/` folder to your n8n nodes directory:
-   ```bash
-   cp -r dist ~/.n8n/nodes/n8n-nodes-numeriquai
-   ```
-3. Install dependencies in the copied location:
-   ```bash
-   cd ~/.n8n/nodes/n8n-nodes-numeriquai
-   npm install --production
-   ```
-4. Restart n8n
+5. **Restart n8n** to load the linked node
 
 ## Usage
 
@@ -105,7 +95,7 @@ Merge multiple input JSON items into a single streamlined JSON object using deep
 
 **Requirements:**
 - Multiple input connections (2-10)
-- Note: While credentials are configured at the node level, they are not used by the Flat Merge operation
+- **Note**: Credentials must be configured (the node requires them), but they are not used by the Flat Merge operation
 
 **Example:**
 - Input 1: `{ "name": "John", "age": 30 }`
@@ -187,27 +177,7 @@ The node sends a POST request with:
 - For Flat Merge: Errors during merge operations can be handled with "Continue on Fail"
 - For Evaluate Rules: API errors (network, authentication, etc.) can be handled with "Continue on Fail"
 
-## Development
-
-### Prerequisites
-
-- Node.js (version 18.17.0 or higher)
-- npm
-- n8n instance for testing
-
-### Building
-
-```bash
-npm run build
-```
-
-### Linting
-
-```bash
-npm run lint
-```
-
-### Testing & Verification
+## Testing & Verification
 
 After installing the node, verify it works correctly:
 
@@ -337,194 +307,83 @@ For production deployments:
 3. **Check performance** with larger datasets
 4. **Monitor logs** for any runtime errors
 
-## Publishing to npm
+## Development Commands
 
-To publish this node to the npm registry so it can be installed via n8n's Community Nodes feature:
+```bash
+# Build the project
+npm run build
 
-### Prerequisites
+# Run linting
+npm run lint
 
-1. **Create an npm account** (if you don't have one):
-   - Go to [npmjs.com](https://www.npmjs.com/signup)
-   - Create a free account
-   - Verify your email address
+# Fix linting issues
+npm run lintfix
 
-2. **Login to npm via command line**:
-   ```bash
-   npm login
-   ```
-   Enter your username, password, and email when prompted.
+# Format code
+npm run format
 
-3. **Verify you're logged in**:
-   ```bash
-   npm whoami
-   ```
+# Watch mode for development
+npm run dev
+```
 
-### Pre-Publishing Checklist
+## Publishing (For Maintainers)
 
-Before publishing, ensure:
+This package is published to npm. To publish a new version:
 
-- [ ] **Version number is correct** in `package.json` (follows [semantic versioning](https://semver.org/))
-- [ ] **Package name is available** on npm (check at `https://www.npmjs.com/package/n8n-nodes-numeriquai`)
-- [ ] **All code is tested** and working
-- [ ] **README.md is complete** and accurate
-- [ ] **Build succeeds** without errors
-- [ ] **Linting passes** without errors
-- [ ] **Git repository is clean** (commit all changes)
-
-### Publishing Steps
-
-1. **Update version number** in `package.json`:
-   ```bash
-   # For patch release (bug fixes)
-   npm version patch
-   
-   # For minor release (new features)
-   npm version minor
-   
-   # For major release (breaking changes)
-   npm version major
-   ```
-   Or manually edit `package.json` and update the `version` field (e.g., `"0.1.0"` → `"0.1.1"`).
-
-2. **Build the project**:
-   ```bash
-   npm run build
-   ```
-   This compiles TypeScript and copies assets to `dist/`.
-
-3. **Verify the build**:
-   ```bash
-   ls -la dist/
-   # Should see:
-   # - dist/nodes/Numeriquai/ (with .js files)
-   # - dist/credentials/ (with .js files)
-   ```
-
-4. **Run linting** (optional but recommended):
-   ```bash
-   npm run lint
-   ```
-   Fix any linting errors before publishing.
-
-5. **Test the package locally** (optional but recommended):
-   ```bash
-   # Create a test package
-   npm pack
-   # This creates a .tgz file you can inspect
-   
-   # Or test install locally
-   npm link
-   cd ~/.n8n/nodes
-   npm link n8n-nodes-numeriquai
-   # Test in n8n, then unlink when done
-   ```
-
-6. **Publish to npm**:
-   ```bash
-   npm publish
-   ```
-   
-   **For first-time publishing**, npm will ask you to verify:
-   - Package name: `n8n-nodes-numeriquai`
-   - Version: (e.g., `0.1.0`)
-   - Files to be published
-   
-   Type `yes` to confirm.
-
-7. **Verify publication**:
-   - Check your package on npm: `https://www.npmjs.com/package/n8n-nodes-numeriquai`
-   - The package should be visible and installable
-
-### Publishing Scoped Packages (Optional)
-
-If you want to publish under a scoped name (e.g., `@numeriquai/n8n-nodes-numeriquai`):
-
-1. Update `package.json` name to `@numeriquai/n8n-nodes-numeriquai`
-2. Publish with public access:
-   ```bash
-   npm publish --access public
-   ```
-
-### After Publishing
-
-1. **Tag the release in Git** (if using version command):
-   ```bash
-   git push --tags
-   git push
-   ```
-
-2. **Create a GitHub release** (if applicable):
-   - Go to your GitHub repository
-   - Create a new release
-   - Tag the version (e.g., `v0.1.0`)
-   - Add release notes
-
-3. **Test installation via n8n**:
-   - In n8n: Settings → Community Nodes
-   - Install: `n8n-nodes-numeriquai`
-   - Verify it works correctly
-
-### Updating a Published Package
-
-To publish an update:
-
-1. Update the version number (use `npm version patch/minor/major`)
-2. Rebuild: `npm run build`
-3. Publish: `npm publish`
-
-### Troubleshooting
-
-**"Package name already exists"**:
-- The package name `n8n-nodes-numeriquai` is already taken
-- Choose a different name or contact the owner
-- Update `package.json` with the new name
-
-**"You do not have permission"**:
-- You're not logged in: run `npm login`
-- You don't own the package: contact the owner or use a different name
-
-**"Invalid package name"**:
-- Package name must be lowercase
-- Can contain hyphens and underscores
-- Must start with a letter
-
-**Build fails**:
-- Check TypeScript errors: `npm run build`
-- Fix any compilation errors
-- Ensure all dependencies are installed: `npm install`
-
-### Publishing Checklist Summary
+### Using n8n-node CLI Tool (Recommended)
 
 ```bash
 # 1. Login to npm
 npm login
 
-# 2. Update version
-npm version patch  # or minor/major
-
-# 3. Build
-npm run build
-
-# 4. Lint (optional)
-npm run lint
-
-# 5. Test locally (optional)
-npm pack
-
-# 6. Publish
-npm publish
-
-# 7. Verify
-# Visit https://www.npmjs.com/package/n8n-nodes-numeriquai
+# 2. Release (builds, lints, updates version, publishes)
+npx n8n-node release
 ```
+
+See [N8N_NODE_CLI_GUIDE.md](N8N_NODE_CLI_GUIDE.md) for detailed information.
+
+### Manual Publishing
+
+1. **Update version**:
+   ```bash
+   npm version patch  # or minor/major
+   ```
+
+2. **Build and publish**:
+   ```bash
+   npm run build
+   npm publish
+   ```
+
+3. **Push tags**:
+   ```bash
+   git push --tags
+   git push
+   ```
+
+The package is automatically built before publishing via the `prepublishOnly` script.
 
 ## Contributing
 
+Contributions are welcome! Please follow these steps:
+
 1. Fork the repository
-2. Create a feature branch
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
 3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
+4. Run linting (`npm run lint`) and fix any issues
+5. Build the project (`npm run build`) to ensure it compiles
+6. Commit your changes (`git commit -m 'Add some amazing feature'`)
+7. Push to the branch (`git push origin feature/amazing-feature`)
+8. Open a Pull Request
+
+Please ensure your code follows the existing style and passes all linting checks.
+
+## Links
+
+- **npm Package**: [https://www.npmjs.com/package/n8n-nodes-numeriquai](https://www.npmjs.com/package/n8n-nodes-numeriquai)
+- **GitHub Repository**: [https://github.com/numeriquai/n8n-nodes-numeriquai](https://github.com/numeriquai/n8n-nodes-numeriquai)
+- **Numeriquai Website**: [https://numeriquai.com](https://numeriquai.com)
+- **n8n Documentation**: [https://docs.n8n.io](https://docs.n8n.io)
 
 ## License
 
@@ -532,7 +391,7 @@ MIT
 
 ## Support
 
-For issues and questions:
-- Create an issue on GitHub
-- Check the n8n community documentation
-- Join the n8n community Discord
+For issues, questions, or feature requests:
+- **GitHub Issues**: [Create an issue](https://github.com/numeriquai/n8n-nodes-numeriquai/issues)
+- **Numeriquai Support**: [https://numeriquai.com](https://numeriquai.com)
+- **n8n Community**: [n8n Community Forum](https://community.n8n.io)
