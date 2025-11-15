@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-numeriquai",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Custom n8n nodes for Numeriquai",
   "keywords": [
     "n8n-community-node-package",

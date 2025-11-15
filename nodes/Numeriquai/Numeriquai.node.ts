@@ -270,7 +270,7 @@ export async function executeEvaluateRules(this: IExecuteFunctions): Promise<INo
 		// Log request details
 		const requestOptions = {
 			method: 'POST' as const,
-			uri: ipv4Endpoint,
+			url: ipv4Endpoint,
 			body: requestBody,
 			json: true,
 			headers: {
@@ -283,7 +283,7 @@ export async function executeEvaluateRules(this: IExecuteFunctions): Promise<INo
 		console.log(`[Numeriquai:EvaluateRules] Making request to: ${ipv4Endpoint}`);
 
 		// Make API request
-		const responseData = await this.helpers.request(requestOptions);
+		const responseData = await this.helpers.httpRequest(requestOptions);
 
 		console.log(`[Numeriquai:EvaluateRules] Request successful!`);
 
