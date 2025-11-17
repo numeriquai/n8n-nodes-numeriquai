@@ -1,4 +1,4 @@
-import { ICredentialType, INodeProperties } from 'n8n-workflow';
+import { ICredentialType, INodeProperties, ICredentialTestRequest } from 'n8n-workflow';
 
 export class NumeriquaiApi implements ICredentialType {
 	name = 'numeriquaiApi';
@@ -18,6 +18,17 @@ export class NumeriquaiApi implements ICredentialType {
 			default: '',
 		},
 	];
+
+	test: ICredentialTestRequest = {
+		request: {
+			baseURL: 'https://api.numeriquai.com',
+			url: '/api/v1/auth/verify',
+			method: 'GET',
+			headers: {
+				'X-API-Key': '={{$credentials.apiToken}}',
+			},
+		},
+	};
 }
 
 export const numeriquaiApi = NumeriquaiApi;
