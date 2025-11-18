@@ -230,7 +230,8 @@ export async function executeEvaluateRules(this: IExecuteFunctions): Promise<INo
 		}
 
 		const apiToken = credentials.apiToken as string;
-		const apiUrl = 'https://api.numeriquai.com';
+		// Get API URL from credentials, default to standard endpoint if not provided
+		const apiUrl = (credentials.apiUrl as string) || 'https://api.numeriquai.com';
 		const apiEndpoint = `${apiUrl}/api/v1/audits/`;
 
 		// Validate required parameters

@@ -17,11 +17,19 @@ export class NumeriquaiApi implements ICredentialType {
 			},
 			default: '',
 		},
+		{
+			displayName: 'API URL',
+			name: 'apiUrl',
+			type: 'string',
+			default: 'https://api.numeriquai.com',
+			description: 'The base URL for the Numeriquai API. Leave as default for standard endpoint, or enter custom URL (e.g., https://api-saaf.numeriquai.com)',
+			placeholder: 'https://api.numeriquai.com',
+		},
 	];
 
 	test: ICredentialTestRequest = {
 		request: {
-			baseURL: 'https://api.numeriquai.com',
+			baseURL: '={{$credentials.apiUrl || "https://api.numeriquai.com"}}',
 			url: '/api/v1/auth/verify',
 			method: 'GET',
 			headers: {
