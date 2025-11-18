@@ -22,7 +22,7 @@ export class NumeriquaiApi implements ICredentialType {
 			name: 'apiUrl',
 			type: 'string',
 			default: 'https://api.numeriquai.com',
-			description: 'The base URL for the Numeriquai API. Leave as default for standard endpoint, or enter custom URL (e.g., https://api-saaf.numeriquai.com)',
+			description: 'The base URL for the Numeriquai API. Leave as default for standard endpoint, or enter custom URL.',
 			placeholder: 'https://api.numeriquai.com',
 		},
 	];
