@@ -37,6 +37,32 @@ export function deepMerge(target: IDataObject, source: IDataObject): IDataObject
 	return output;
 }
 
+/**
+ * Safely parse JSON string, handling potential double wrapping
+ */
+function safeParseJSON(input: any): any {
+	if (typeof input !== 'string') {
+		return input;
+	}
+
+	const cleanInput = input.trim();
+
+	try {
+		return JSON.parse(cleanInput);
+	} catch (error) {
+		// Check for double braces {{ ... }}
+		if (cleanInput.startsWith('{{') && cleanInput.endsWith('}}')) {
+			try {
+				const inner = cleanInput.slice(1, -1);
+				return JSON.parse(inner);
+			} catch (e) {
+				// Ignore inner parse error
+			}
+		}
+		return input;
+	}
+}
+
 export class Numeriquai implements INodeType {
 	description: INodeTypeDescription = {
 		displayName: 'Numeriquai',
@@ -168,7 +194,13 @@ export async function executeFlatMerge(this: IExecuteFunctions): Promise<INodeEx
 
 		if (Array.isArray(allItems)) {
 			for (const item of allItems) {
-				const itemJson = item.json;
+				let itemJson = { ...item.json };
+
+				// Process values for JSON strings
+				for (const key of Object.keys(itemJson)) {
+					itemJson[key] = safeParseJSON(itemJson[key]);
+				}
+
 				// Always use deep merge to recursively merge nested objects
 				mergedInputs = deepMerge(mergedInputs, itemJson);
 			}
@@ -252,8 +284,8 @@ export async function executeEvaluateRules(this: IExecuteFunctions): Promise<INo
 
 		// Prepare request body
 		const requestBody = {
-			reference: `Test run N8N guidline ${timeStamp}`,
-			description: "N8N test",
+			reference: `Application run N8N guideline ${timeStamp}`,
+			description: "N8N application run",
 			guideline_id: guidelineId,
 			inputs: input,
 		};
@@ -302,16 +334,48 @@ export async function executeEvaluateRules(this: IExecuteFunctions): Promise<INo
 			errorMessage: error instanceof Error ? error.message : String(error),
 		});
 
+		console.log(`[Numeriquai:EvaluateRules] Error structure:`, JSON.stringify(error, null, 2));
+
+		// Extract error message, including detail from data if available
+		// Check multiple possible locations for the detail field
+		let errorMessage = error instanceof Error ? error.message : String(error);
+		const errorAny = error as any;
+		
+		// Try to extract detail from various possible locations
+		let errorDetail = errorAny?.data?.detail || errorAny?.response?.data?.detail || errorAny?.detail;
+		
+		// If not found, try parsing response body if it's a string
+		if (!errorDetail && errorAny?.response?.body) {
+			try {
+				const body = typeof errorAny.response.body === 'string' 
+					? JSON.parse(errorAny.response.body) 
+					: errorAny.response.body;
+				errorDetail = body?.detail || body?.data?.detail;
+			} catch (e) {
+				// Ignore JSON parse errors
+			}
+		}
+		
+		// Also check if response.data exists directly
+		if (!errorDetail && errorAny?.response?.data) {
+			errorDetail = errorAny.response.data.detail;
+		}
+		
+		if (errorDetail) {
+			errorMessage = `${errorMessage}: ${errorDetail}`;
+		}
+
 		if (this.continueOnFail()) {
 			returnData.push({
 				json: {
-					error: error instanceof Error ? error.message : String(error),
+					error: errorMessage,
 					errorType: error instanceof Error ? error.constructor.name : typeof error,
+					...(errorDetail && { detail: errorDetail }),
 				},
 				pairedItem: { item: 0 },
 			});
 		} else {
-			throw new NodeOperationError(this.getNode(), `API request failed: ${error instanceof Error ? error.message : String(error)}`);
+			throw new NodeOperationError(this.getNode(), `API request failed: ${errorMessage}`);
 		}
 	}
 
