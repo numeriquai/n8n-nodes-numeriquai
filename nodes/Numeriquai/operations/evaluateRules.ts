@@ -14,9 +14,9 @@ export async function executeEvaluateRules(this: IExecuteFunctions): Promise<INo
 
 	try {
 		const guidelineId = this.getNodeParameter('guidelineId', 0) as string;
-		const ignoreNonExistentVariable = this.getNodeParameter('ignore_non_existent_variable', 0) as boolean;
-		const ignoreIncorrectValueType = this.getNodeParameter('ignore_incorrect_value_type', 0) as boolean;
-		const ignoreNonExistentEnumeration = this.getNodeParameter('ignore_non_existent_enumeration', 0) as boolean;
+		const errorOnNonExistentVariable = this.getNodeParameter('error_on_non_existent_variable', 0) as boolean;
+		const errorOnIncorrectValueType = this.getNodeParameter('error_on_incorrect_value_type', 0) as boolean;
+		const errorOnNonExistentEnumeration = this.getNodeParameter('error_on_non_existent_enumeration', 0) as boolean;
 		const credentials = await this.getCredentials('numeriquaiApi');
 
 		if (!credentials) {
@@ -50,17 +50,17 @@ export async function executeEvaluateRules(this: IExecuteFunctions): Promise<INo
 			description: string;
 			guideline_id: string;
 			inputs: unknown;
-			ignore_non_existent_variable: boolean;
-			ignore_incorrect_value_type: boolean;
-			ignore_non_existent_enumeration: boolean;
+			error_on_non_existent_variable: boolean;
+			error_on_incorrect_value_type: boolean;
+			error_on_non_existent_enumeration: boolean;
 		} = {
 			reference: `Application run N8N guideline ${timeStamp}`,
 			description: "N8N application run",
 			guideline_id: guidelineId,
 			inputs: input,
-			ignore_non_existent_variable: ignoreNonExistentVariable,
-			ignore_incorrect_value_type: ignoreIncorrectValueType,
-			ignore_non_existent_enumeration: ignoreNonExistentEnumeration,
+			error_on_non_existent_variable: errorOnNonExistentVariable,
+			error_on_incorrect_value_type: errorOnIncorrectValueType,
+			error_on_non_existent_enumeration: errorOnNonExistentEnumeration,
 		};
 
 		console.log(`[Numeriquai:EvaluateRules] Request body prepared:`, {

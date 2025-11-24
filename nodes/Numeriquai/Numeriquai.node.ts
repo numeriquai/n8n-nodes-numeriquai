@@ -102,40 +102,40 @@ export class Numeriquai implements INodeType {
 				placeholder: 'Enter guideline ID',
 			},
 			{
-				displayName: 'Ignore Non-Existent Variable',
-				name: 'ignore_non_existent_variable',
+				displayName: 'Error on Non-Existent Variable',
+				name: 'error_on_non_existent_variable',
 				type: 'boolean',
 				displayOptions: {
 					show: {
 						operation: ['evaluateRules'],
 					},
 				},
-				default: false,
-				description: 'Whether to ignore errors for non-existent variables',
+				default: true,
+				description: 'Whether to error on non-existent variables',
 			},
 			{
-				displayName: 'Ignore Incorrect Value Type',
-				name: 'ignore_incorrect_value_type',
+				displayName: 'Error on Incorrect Value Type',
+				name: 'error_on_incorrect_value_type',
 				type: 'boolean',
 				displayOptions: {
 					show: {
 						operation: ['evaluateRules'],
 					},
 				},
-				default: false,
-				description: 'Whether to ignore errors for incorrect value types',
+				default: true,
+				description: 'Whether to error on incorrect value types',
 			},
 			{
-				displayName: 'Ignore Non-Existent Enumeration',
-				name: 'ignore_non_existent_enumeration',
+				displayName: 'Error on Non-Existent Enumeration',
+				name: 'error_on_non_existent_enumeration',
 				type: 'boolean',
 				displayOptions: {
 					show: {
 						operation: ['evaluateRules'],
 					},
 				},
-				default: false,
-				description: 'Whether to ignore errors for non-existent enumeration values',
+				default: true,
+				description: 'Whether to error on non-existent enumeration values',
 			},
 		],
 	};
