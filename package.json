@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-numeriquai",
-  "version": "0.1.67",
+  "version": "0.1.7",
   "description": "Custom n8n nodes for Numeriquai",
   "keywords": [
     "n8n-community-node-package",
@@ -21,7 +21,7 @@
   "scripts": {
     "build": "tsc && npm run copy-icons",
     "copy-icons": "copyfiles \"nodes/**/*.{png,svg,json}\" dist/",
-    "dev": "tsc --watch",
+    "dev": "npm run build && concurrently \"tsc-watch --onSuccess 'npm run copy-icons'\" \"nodemon --watch nodes --watch credentials --ext png,svg,json --exec 'npm run copy-icons'\" \"nodemon --watch dist --ext js,json,png,svg --delay 2000ms --exec 'n8n start'\"",
     "format": "prettier nodes credentials --write",
     "lint": "eslint nodes credentials",
     "lintfix": "eslint nodes credentials --fix",
@@ -30,23 +30,26 @@
   "files": [
     "dist"
   ],
-		"n8n": {
-			"n8nNodesApiVersion": 1,
-			"credentials": [
-				"dist/credentials/numeriquaiApi.credentials.js"
-			],
-			"nodes": [
-				"dist/nodes/Numeriquai/Numeriquai.node.js"
-			]
-		},
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "credentials": [
+      "dist/credentials/numeriquaiApi.credentials.js"
+    ],
+    "nodes": [
+      "dist/nodes/Numeriquai/Numeriquai.node.js"
+    ]
+  },
   "devDependencies": {
     "@types/node": "^20.0.0",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
+    "concurrently": "^9.2.1",
     "copyfiles": "^2.4.1",
     "eslint": "^8.0.0",
     "eslint-plugin-n8n-nodes-base": "^1.0.0",
+    "nodemon": "^3.1.11",
     "prettier": "^3.0.0",
+    "tsc-watch": "^7.2.0",
     "typescript": "^5.0.0"
   },
   "peerDependencies": {
