@@ -8,8 +8,6 @@ export async function executeEvaluateRules(this: IExecuteFunctions): Promise<INo
 	const items = this.getInputData();
 	const returnData: INodeExecutionData[] = [];
 
-	console.log(`[Numeriquai:EvaluateRules] Starting execution with ${items.length} items`);
-
 	const input = items[0].json;
 
 	try {
@@ -36,8 +34,6 @@ export async function executeEvaluateRules(this: IExecuteFunctions): Promise<INo
 			throw new NodeOperationError(this.getNode(), 'API Key is required');
 		}
 
-		console.log(`[Numeriquai:EvaluateRules] All validations passed`);
-
 		// Get current time for reference
 		const now = new Date();
 		const hours = now.getHours().toString().padStart(2, '0');
@@ -63,17 +59,8 @@ export async function executeEvaluateRules(this: IExecuteFunctions): Promise<INo
 			error_on_non_existent_enumeration: errorOnNonExistentEnumeration,
 		};
 
-		console.log(`[Numeriquai:EvaluateRules] Request body prepared:`, {
-			reference: requestBody.reference,
-			description: requestBody.description,
-			guideline_id: requestBody.guideline_id,
-			inputKeys: Object.keys(input)
-		});
-
 		// Convert localhost to IPv4 address to avoid IPv6 issues
 		const ipv4Endpoint = apiEndpoint.replace('localhost', '127.0.0.1');
-
-		console.log(`[Numeriquai:EvaluateRules] Request body:`, requestBody);
 
 		// Log request details
 		const requestOptions = {
@@ -88,12 +75,8 @@ export async function executeEvaluateRules(this: IExecuteFunctions): Promise<INo
 			timeout: 30000,
 		};
 
-		console.log(`[Numeriquai:EvaluateRules] Making request to: ${ipv4Endpoint}`);
-
 		// Make API request
 		const responseData = await this.helpers.httpRequest(requestOptions);
-
-		console.log(`[Numeriquai:EvaluateRules] Request successful!`);
 
 		// Add response to return data
 		returnData.push({
@@ -101,16 +84,7 @@ export async function executeEvaluateRules(this: IExecuteFunctions): Promise<INo
 			pairedItem: { item: 0 },
 		});
 
-		console.log(`[Numeriquai:EvaluateRules] Processing completed successfully`);
-
 	} catch (error) {
-		console.error(`[Numeriquai:EvaluateRules] Error processing:`, {
-			errorType: error instanceof Error ? error.constructor.name : typeof error,
-			errorMessage: error instanceof Error ? error.message : String(error),
-		});
-
-		// console.log(`[Numeriquai:EvaluateRules] Error structure:`, JSON.stringify(error, null, 2));
-
 		// Extract error message, including detail from data if available
 		// Check multiple possible locations for the detail field
 		let errorMessage = error instanceof Error ? error.message : String(error);
@@ -154,7 +128,6 @@ export async function executeEvaluateRules(this: IExecuteFunctions): Promise<INo
 		}
 	}
 
-	console.log(`[Numeriquai:EvaluateRules] Execution completed. Returning ${returnData.length} items`);
 	return [returnData];
 }
 

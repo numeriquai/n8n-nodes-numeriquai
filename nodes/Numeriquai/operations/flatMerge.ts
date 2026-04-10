@@ -12,17 +12,12 @@ export async function executeFlatMerge(this: IExecuteFunctions): Promise<INodeEx
 	try {
 		const numberOfInputs = this.getNodeParameter('numberOfInputs', 0) as number;
 
-		console.log(`[Numeriquai:FlatMerge] Starting execution with ${numberOfInputs} input connections using deep merge`);
-
 		// Collect all items from all input connections
 		const allItems: INodeExecutionData[] = [];
 		for (let inputIndex = 0; inputIndex < numberOfInputs; inputIndex++) {
 			const inputData = this.getInputData(inputIndex);
 			allItems.push(...inputData);
-			console.log(`[Numeriquai:FlatMerge] Input ${inputIndex + 1} has ${inputData.length} items`);
 		}
-
-		console.log(`[Numeriquai:FlatMerge] Total items to merge: ${allItems.length}`);
 
 		// Merge all items into a single object using deep merge
 		let mergedInputs: IDataObject = {};
@@ -43,11 +38,8 @@ export async function executeFlatMerge(this: IExecuteFunctions): Promise<INodeEx
 			mergedInputs = { ...(allItems as INodeExecutionData).json };
 		}
 
-		console.log(`[Numeriquai:FlatMerge] Final merged object has ${Object.keys(mergedInputs).length} keys: ${Object.keys(mergedInputs).join(', ')}`);
-
 		// Ensure mergedInputs is an object, not an array
 		if (Array.isArray(mergedInputs)) {
-			console.warn(`[Numeriquai:FlatMerge] Warning: mergedInputs is an array, converting to object`);
 			mergedInputs = mergedInputs.length > 0 ? mergedInputs[0] : {};
 		}
 
@@ -57,13 +49,7 @@ export async function executeFlatMerge(this: IExecuteFunctions): Promise<INodeEx
 			pairedItem: allItems.length > 0 ? allItems.map((_, index) => ({ item: index })) : [{ item: 0 }],
 		});
 
-		console.log(`[Numeriquai:FlatMerge] Execution completed successfully. Returning merged JSON object directly`);
 	} catch (error) {
-		console.error(`[Numeriquai:FlatMerge] Error processing:`, {
-			errorType: error instanceof Error ? error.constructor.name : typeof error,
-			errorMessage: error instanceof Error ? error.message : String(error),
-		});
-
 		if (this.continueOnFail()) {
 			returnData.push({
 				json: {
