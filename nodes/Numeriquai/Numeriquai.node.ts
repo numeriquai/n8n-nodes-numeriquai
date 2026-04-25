@@ -111,8 +111,7 @@ export class Numeriquai implements INodeType {
 					},
 				},
 				default: '',
-				required: false,
-				description: 'Enter comma separated rule ids to run application with those rules only',
+				description: 'Enter comma-separated rule IDs to run application with those rules only',
 				placeholder: 'Enter comma separated rule IDs',
 			},
 			{
