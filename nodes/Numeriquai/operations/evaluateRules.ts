@@ -15,6 +15,7 @@ export async function executeEvaluateRules(this: IExecuteFunctions): Promise<INo
 		const errorOnNonExistentVariable = this.getNodeParameter('error_on_non_existent_variable', 0) as boolean;
 		const errorOnIncorrectValueType = this.getNodeParameter('error_on_incorrect_value_type', 0) as boolean;
 		const errorOnNonExistentEnumeration = this.getNodeParameter('error_on_non_existent_enumeration', 0) as boolean;
+		const ruleIdsRaw = this.getNodeParameter('ruleIds', 0, '') as string;
 		const credentials = await this.getCredentials('numeriquaiApi');
 
 		if (!credentials) {
@@ -49,6 +50,7 @@ export async function executeEvaluateRules(this: IExecuteFunctions): Promise<INo
 			error_on_non_existent_variable: boolean;
 			error_on_incorrect_value_type: boolean;
 			error_on_non_existent_enumeration: boolean;
+			rule_ids?: string[];
 		} = {
 			reference: `Application run N8N guideline ${timeStamp}`,
 			description: "N8N application run",
@@ -58,6 +60,10 @@ export async function executeEvaluateRules(this: IExecuteFunctions): Promise<INo
 			error_on_incorrect_value_type: errorOnIncorrectValueType,
 			error_on_non_existent_enumeration: errorOnNonExistentEnumeration,
 		};
+
+		if (ruleIdsRaw.trim()) {
+			requestBody.rule_ids = ruleIdsRaw.split(',').map((id) => id.trim()).filter((id) => id.length > 0);
+		}
 
 		// Convert localhost to IPv4 address to avoid IPv6 issues
 		const ipv4Endpoint = apiEndpoint.replace('localhost', '127.0.0.1');

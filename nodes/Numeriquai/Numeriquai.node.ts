@@ -102,6 +102,20 @@ export class Numeriquai implements INodeType {
 				placeholder: 'Enter guideline ID',
 			},
 			{
+				displayName: 'Rule IDs (Optional)',
+				name: 'ruleIds',
+				type: 'string',
+				displayOptions: {
+					show: {
+						operation: ['evaluateRules'],
+					},
+				},
+				default: '',
+				required: false,
+				description: 'Enter comma separated rule ids to run application with those rules only',
+				placeholder: 'Enter comma separated rule IDs',
+			},
+			{
 				displayName: 'Error on Non-Existent Variable',
 				name: 'error_on_non_existent_variable',
 				type: 'boolean',
